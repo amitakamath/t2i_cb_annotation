@@ -168,7 +168,8 @@ elif st.session_state.page == "study":
 
     item = st.session_state.image_order[idx]
 
-    image_path = f"{IMAGE_FOLDER}/{item['model']}/{item['image']}"
+    #image_path = f"{IMAGE_FOLDER}/{item['model']}/{item['image']}"
+    image_path = f"{item['image']}"
     caption = item["caption"]
 
     st.title(f"Image {idx + 1} / {TOTAL_IMAGES}")
