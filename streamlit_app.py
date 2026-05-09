@@ -66,12 +66,19 @@ def save_response_to_sheet(response_row):
 def load_items():
     with open("captions.json", "r") as f:
         files = json.load(f)
+    base_path = Path("study_images")
     items = []
-    for f in files:
-        items.append({
-            "image": f,
-            "caption": f[:-11]
-        })
+
+    for model_dir in base_path.iterdir():
+        if model_dir.is_dir():
+            model_name = model_dir.name
+            for img_path in model_dir.glob("*"):
+                items.append({
+                    "image": str(img_path),
+                    "caption": str(img_path)[:-11],
+                    "model": model_name
+                })
+
     return items
 study_items = load_items()
 
@@ -229,7 +236,8 @@ elif st.session_state.page == "study":
                 participant_id,
                 idx + 1,
                 item["image"],
-                caption,
+                item["caption"],
+                item["model"],
                 q1,
                 q2
             ]
