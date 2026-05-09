@@ -75,7 +75,7 @@ def load_items():
             for img_path in model_dir.glob("*"):
                 items.append({
                     "image": str(img_path),
-                    "caption": str(img_path)[:-11],
+                    "caption": str(img_path).split('/')[-1][:-11],
                     "model": model_name
                 })
 
