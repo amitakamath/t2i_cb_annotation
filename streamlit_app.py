@@ -14,7 +14,7 @@ from PIL import Image
 # CONFIG
 # =========================================================
 
-IMAGE_FOLDER = "study_images/sd2_1"
+IMAGE_FOLDER = "study_images"
 INSTRUCTION_FOLDER = "instructions"
 
 TOTAL_IMAGES = 10
@@ -168,7 +168,7 @@ elif st.session_state.page == "study":
 
     item = st.session_state.image_order[idx]
 
-    image_path = f"{IMAGE_FOLDER}/{item['image']}"
+    image_path = f"{IMAGE_FOLDER}/{item['model']}/{item['image']}"
     caption = item["caption"]
 
     st.title(f"Image {idx + 1} / {TOTAL_IMAGES}")
