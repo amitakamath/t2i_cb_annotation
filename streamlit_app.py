@@ -266,5 +266,5 @@ elif st.session_state.page == "complete":
     )
 
     st.success(
-        "Your Prolific completion code is: **ABC123XYZ**"
+        "Your Prolific completion code is: **CX6ASI8T**"
     )
