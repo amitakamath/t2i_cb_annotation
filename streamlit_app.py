@@ -63,7 +63,7 @@ def assign_images(pool_sheet, n=10):
     available = df[df["assigned"] == 0]
     if len(available) < n:
         return None
-    selected = available.sample(n)
+    selected = available.head(n)
     # mark as assigned in sheet
     for idx in selected.index:
         pool_sheet.update_cell(
