@@ -28,7 +28,7 @@ st.set_page_config(
 # GOOGLE SHEETS
 # =========================================================
 
-def get_gsheet():
+def get_gsheet(tab_name="image_pool"):
 
     credentials_data = st.secrets["google_sheets"]
 
@@ -46,15 +46,36 @@ def get_gsheet():
 
     sheet = client.open_by_url(
         st.secrets["google_sheets"]["spreadsheet"]
-    ).sheet1
+    ).worksheet(tab_name)
 
     return sheet
 
+def get_available_images(sheet):
+    data = sheet.get_all_records()
+    df = pd.DataFrame(data)
+    return df[df["assigned"] == 0]
+
+
+def assign_images(pool_sheet, n=10):
+    data = pool_sheet.get_all_records()
+    df = pd.DataFrame(data)
+
+    available = df[df["assigned"] == 0]
+    if len(available) < n:
+        return None
+    selected = available.sample(n)
+    # mark as assigned in sheet
+    for idx in selected.index:
+        pool_sheet.update_cell(
+            idx + 2,  # account for header row
+            df.columns.get_loc("assigned") + 1,
+            1
+        )
+    return selected.to_dict("records")
+
 
 def save_response_to_sheet(response_row):
-
-    sheet = get_gsheet()
-
+    sheet = get_gsheet("responses")
     sheet.append_row(response_row)
 
 
@@ -80,16 +101,26 @@ def load_items():
                 })
 
     return items
-study_items = load_items()
+#study_items = load_items()
 
 
 # =========================================================
 # SESSION STATE
 # =========================================================
 
+pool_sheet = get_gsheet("image_pool")
+
 if "image_order" not in st.session_state:
-    random.shuffle(study_items)
-    st.session_state.image_order = study_items[:TOTAL_IMAGES]
+    images = assign_images(pool_sheet, 10)
+    if images is None:
+        st.error("No more unassigned images available.")
+        st.stop()
+    st.session_state.image_order = images
+
+
+#if "image_order" not in st.session_state:
+#    random.shuffle(study_items)
+#    st.session_state.image_order = study_items[:TOTAL_IMAGES]
 
 if "page" not in st.session_state:
     st.session_state.page = "instructions"
