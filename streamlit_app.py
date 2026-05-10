@@ -103,6 +103,26 @@ def load_items():
     return items
 #study_items = load_items()
 
+def mark_annotated(image_path, pool_sheet):
+    """
+    cell = pool_sheet.find(image_path)
+    if not cell:
+        st.error(f"Image not found in sheet: {image_path}")
+        return
+    headers = pool_sheet.row_values(1)
+    annotated_col = headers.index("annotated") + 1
+
+    pool_sheet.update_cell(cell.row, annotated_col, 1)
+    """
+    data = pool_sheet.get_all_records()
+    df = pd.DataFrame(data)
+    row = df[df["image"] == image_path].index[0]
+    pool_sheet.update_cell(
+        row + 2,
+        df.columns.get_loc("annotated") + 1,
+        1
+    )
+
 
 # =========================================================
 # SESSION STATE
@@ -275,7 +295,7 @@ elif st.session_state.page == "study":
             ]
 
             save_response_to_sheet(response)
-
+            mark_annotated(item["image"], get_gsheet("image_pool"))
             st.session_state.current_index += 1
 
             st.rerun()
